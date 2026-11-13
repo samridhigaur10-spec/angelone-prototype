@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AngelOne Prototype: Guided Smart Order Pad (Bet 1 Showcase)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070D18;
+      --panel-bg: #0D1527;
+      --panel-border: #1E293B;
+      --angel-navy: #0B1E48;
+      --angel-blue: #1E3A8A;
+      --angel-orange: #FF5722;
+      --angel-orange-hover: #F4511E;
+      --angel-green: #00C087;
+      --angel-red: #EF4444;
+      --angel-amber: #F59E0B;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --app-bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border-light: #E2E8F0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-dark);
+      color: #F8FAFC;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Banner */
+    .top-header {
+      background: rgba(13, 21, 39, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 12px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .angel-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: -0.5px;
+      color: #FFFFFF;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, #FF5722, #FF8A65);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+      box-shadow: 0 4px 12px rgba(255, 87, 34, 0.35);
+    }
+
+    .case-tag {
+      background: rgba(255, 87, 34, 0.15);
+      color: #FF8A65;
+      border: 1px solid rgba(255, 87, 34, 0.3);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-pill {
+      background: #1E293B;
+      color: #E2E8F0;
+      border: 1px solid #334155;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-pill:hover {
+      background: #334155;
+      color: #FFF;
+      border-color: #475569;
+    }
+
+    .btn-pill.primary {
+      background: var(--angel-orange);
+      border-color: var(--angel-orange);
+      color: white;
+    }
+
+    .btn-pill.primary:hover {
+      background: var(--angel-orange-hover);
+    }
+
+    /* Main Container Layout */
+    .app-workspace {
+      display: flex;
+      flex: 1;
+      gap: 24px;
+      padding: 24px 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Left Side: Product Explainer & Rationale */
+    .explainer-sidebar {
+      flex: 1;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-dark {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-dark h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-dark p {
+      font-size: 12px;
+      color: #94A3B8;
+      line-height: 1.55;
+    }
+
+    .step-nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .step-item {
+      padding: 10px 12px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid #334155;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .step-item:hover {
+      background: rgba(51, 65, 85, 0.7);
+    }
+
+    .step-item.active {
+      background: rgba(255, 87, 34, 0.12);
+      border-color: var(--angel-orange);
+      box-shadow: 0 0 0 1px var(--angel-orange);
+    }
+
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #1E293B;
+      color: #94A3B8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-item.active .step-num {
+      background: var(--angel-orange);
+      color: white;
+    }
+
+    .step-info h4 {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #F1F5F9;
+      margin-bottom: 2px;
+    }
+
+    .step-info p {
+      font-size: 11px;
+      color: #94A3B8;
+      line-height: 1.35;
+    }
+
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .badge-bet1 { background: rgba(255, 87, 34, 0.2); color: #FF8A65; }
+    .badge-secondary { background: rgba(59, 130, 246, 0.2); color: #93C5FD; }
+
+    /* Center: Mobile Device Simulator */
+    .simulator-container {
+      flex: 1.2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .phone-mockup {
+      width: 390px;
+      height: 800px;
+      background: var(--card-bg);
+      border-radius: 46px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 10px #1E293B, 0 0 0 12px #334155;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      color: var(--text-main);
+    }
+
+    /* Phone Status Bar */
+    .status-bar {
+      height: 44px;
+      background: #FFFFFF;
+      padding: 10px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0F172A;
+      z-index: 50;
+    }
+
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 26px;
+      background: #1E293B;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 60;
+    }
+
+    .status-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    /* Screen Views inside Mobile */
+    .screen-view {
+      display: none;
+      flex-direction: column;
+      height: calc(100% - 44px);
+      overflow-y: auto;
+      background: #F8FAFC;
+      position: relative;
+    }
+
+    .screen-view.active-screen {
+      display: flex;
+    }
+
+    /* Screen 1: Stock Detail Page */
+    .stock-app-bar {
+      padding: 12px 18px;
+      background: white;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .stock-app-bar .back-btn { font-size: 18px; cursor: pointer; color: #334155; }
+    .stock-app-bar .title-group h3 { font-size: 15px; font-weight: 800; color: #0F172A; }
+    .stock-app-bar .title-group span { font-size: 11px; color: #64748B; }
+
+    .stock-hero {
+      background: white;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .price-large {
+      font-size: 26px;
+      font-weight: 800;
+      color: #0F172A;
+      letter-spacing: -0.5px;
+    }
+
+    .price-change {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--angel-green);
+    }
+
+    .chart-container-sim {
+      height: 140px;
+      margin: 16px 0 8px;
+      background: linear-gradient(180deg, rgba(0, 192, 135, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .chart-svg { width: 100%; height: 100%; }
+
+    .stock-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 16px;
+      margin-top: 14px;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .stat-card .label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+    .stat-card .val { font-size: 13px; font-weight: 700; color: var(--text-main); }
+
+    /* Sticky Bottom Buy Bar */
+    .sticky-buy-footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid var(--border-light);
+      padding: 12px 20px;
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+      z-index: 30;
+    }
+
+    .btn-action-sell {
+      flex: 1;
+      background: #FEE2E2;
+      color: #DC2626;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-action-buy {
+      flex: 1.6;
+      background: var(--angel-orange);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-action-buy:hover { background: var(--angel-orange-hover); }
+
+    /* SCREEN 2: The Guided Smart Order Pad (Bet 1 Showcase) */
+    .order-pad-header {
+      padding: 14px 20px 10px;
+      background: white;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order-title-group h3 { font-size: 16px; font-weight: 800; color: #0F172A; }
+    .order-title-group .live-sub { font-size: 12px; color: #64748B; display: flex; align-items: center; gap: 6px; }
+
+    /* Mode Switcher */
+    .mode-switch-wrapper {
+      padding: 9px 20px;
+      background: white;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mode-switch-pill {
+      background: #F1F5F9;
+      border-radius: 8px;
+      padding: 2px;
+      display: flex;
+      gap: 2px;
+    }
+
+    .mode-pill-opt {
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #64748B;
+      transition: all 0.2s ease;
+    }
+
+    .mode-pill-opt.active {
+      background: white;
+      color: var(--angel-orange);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Intent Choice */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748B;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 12px 20px 6px;
+    }
+
+    .purpose-selector {
+      display: flex;
+      gap: 10px;
+      padding: 0 20px;
+    }
+
+    .purpose-card {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border-light);
+      border-radius: 12px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .purpose-card.selected {
+      border-color: var(--angel-orange);
+      background: #FFF7F5;
+    }
+
+    .purpose-card .p-title {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #0F172A;
+      margin-bottom: 2px;
+    }
+
+    .purpose-card.selected .p-title { color: var(--angel-orange); }
+
+    .purpose-card .p-desc {
+      font-size: 10px;
+      color: #64748B;
+      line-height: 1.35;
+    }
+
+    .badge-recommend {
+      position: absolute;
+      top: -8px;
+      right: 10px;
+      background: var(--angel-green);
+      color: white;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* Amount vs Shares Tabs */
+    .input-mode-tabs {
+      display: flex;
+      padding: 0 20px;
+      margin-top: 12px;
+      gap: 12px;
+    }
+
+    .input-tab {
+      font-size: 12px;
+      font-weight: 700;
+      color: #94A3B8;
+      cursor: pointer;
+      padding-bottom: 5px;
+      border-bottom: 2px solid transparent;
+    }
+
+    .input-tab.active {
+      color: #0F172A;
+      border-color: var(--angel-orange);
+    }
+
+    .order-input-box {
+      margin: 8px 20px 0;
+      background: white;
+      border: 1.5px solid var(--border-light);
+      border-radius: 14px;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .input-left-col label { font-size: 11px; font-weight: 600; color: #64748B; }
+
+    .input-val-display {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0F172A;
+      margin-top: 2px;
+      border: none;
+      outline: none;
+      width: 140px;
+      font-family: inherit;
+    }
+
+    .input-stepper { display: flex; align-items: center; gap: 8px; }
+
+    .step-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #F1F5F9;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      color: #0F172A;
+      cursor: pointer;
+    }
+
+    .quick-chips-row {
+      display: flex;
+      gap: 6px;
+      padding: 8px 20px 0;
+      overflow-x: auto;
+    }
+
+    .chip-btn {
+      padding: 4px 10px;
+      background: white;
+      border: 1px solid var(--border-light);
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Calculation & Cost Breakdown */
+    .calculation-breakdown-card {
+      margin: 12px 20px 0;
+      background: #F8FAFC;
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      margin-bottom: 5px;
+    }
+
+    .calc-row:last-child {
+      margin-bottom: 0;
+      padding-top: 5px;
+      border-top: 1px dashed var(--border-light);
+      font-weight: 800;
+    }
+
+    .calc-label { color: #64748B; }
+    .calc-val { font-weight: 700; color: #0F172A; }
+
+    /* Market Slippage Notice */
+    .market-risk-notice {
+      margin: 8px 20px 0;
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 8px;
+      padding: 7px 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 10.5px;
+      color: #92400E;
+      line-height: 1.35;
+    }
+
+    /* Preserved Order Confirmation Banner */
+    .preserved-alert-banner {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 8px 20px 0;
+      font-size: 11px;
+      color: #065F46;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Order Pad Footer CTAs */
+    .order-action-footer {
+      margin-top: auto;
+      padding: 12px 20px;
+      background: white;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .balance-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      margin-bottom: 8px;
+    }
+
+    .btn-main-order {
+      width: 100%;
+      background: var(--angel-orange);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .btn-secondary-sim {
+      width: 100%;
+      background: #EFF6FF;
+      color: #1D4ED8;
+      border: 1px dashed #93C5FD;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    /* SCREEN 3: Contextual Shortfall Sheet (Bet 2 Preview) */
+    .upi-sheet-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 80;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .upi-sheet-overlay.active { display: flex; }
+
+    .upi-sheet-card {
+      width: 100%;
+      background: white;
+      border-top-left-radius: 22px;
+      border-top-right-radius: 22px;
+      padding: 18px 20px 22px;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .bank-reg-banner {
+      background: #F1F5F9;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 11px;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0 12px;
+    }
+
+    .upi-app-select {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .upi-app-item {
+      flex: 1;
+      border: 1.5px solid var(--border-light);
+      border-radius: 10px;
+      padding: 8px 6px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .upi-app-item.selected {
+      border-color: #2563EB;
+      background: #EFF6FF;
+      color: #1E40AF;
+    }
+
+    .btn-upi-action {
+      width: 100%;
+      background: #2563EB;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-bottom: 6px;
+    }
+
+    .btn-upi-pending {
+      width: 100%;
+      background: transparent;
+      color: #64748B;
+      border: 1px solid #CBD5E1;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* SCREEN 4: First Trade Settlement Tracker (Bet 3 Preview) */
+    .tracker-screen-inner {
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      background: white;
+    }
+
+    .order-success-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .check-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--angel-green);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .timeline-container {
+      background: #F8FAFC;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 20px;
+    }
+
+    .timeline-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: #0F172A;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .t-step {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .t-step:last-child { margin-bottom: 0; }
+
+    .t-step-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--angel-green);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .t-step-dot.pending { background: #CBD5E1; color: #64748B; }
+
+    .t-step-content h5 { font-size: 12px; font-weight: 700; color: #0F172A; }
+    .t-step-content p { font-size: 10.5px; color: #64748B; line-height: 1.35; margin-top: 2px; }
+
+    /* Right Column: Case Notes & Methodology */
+    .metrics-sidebar {
+      flex: 1;
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      margin-top: 8px;
+    }
+
+    .matrix-table th, .matrix-table td {
+      padding: 7px 10px;
+      text-align: left;
+      border-bottom: 1px solid #1E293B;
+    }
+
+    .matrix-table th {
+      color: #94A3B8;
+      font-weight: 600;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .matrix-table td { color: #E2E8F0; }
+
+    .interview-tip-box {
+      border-left: 3px solid var(--angel-orange);
+      padding: 12px 14px;
+      background: rgba(255, 87, 34, 0.08);
+      border-radius: 0 10px 10px 0;
+      font-size: 11.5px;
+      color: #FED7AA;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <div class="brand-section">
+      <div class="angel-logo">
+        <div class="logo-badge">A</div>
+        AngelOne
+      </div>
+      <span class="case-tag">Top Bet Prototype: Guided Smart Order Pad</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-pill" onclick="resetPrototype()">↺ Reset Flow</button>
+      <button class="btn-pill primary" onclick="goToStep(2)">⚡ Go to Smart Pad</button>
+    </div>
+  </header>
+
+  <!-- Workspace Container -->
+  <div class="app-workspace">
+
+    <!-- Left Column: Storyboard & Product Rationale -->
+    <aside class="explainer-sidebar">
+      <div class="card-dark">
+        <h2>🎯 Prototype Focus: Bet 1 (Prioritised)</h2>
+        <p>This prototype demonstrates <strong>Bet 1: The Guided Smart Order Pad</strong> as requested by the assignment. Bets 2 & 3 are included as secondary scenario toggles.</p>
+        
+        <div class="step-nav-list">
+          <div class="step-item active" id="nav-step-1" onclick="goToStep(1)">
+            <div class="step-num">1</div>
+            <div class="step-info">
+              <h4>Stock Discovery (Tata Motors)</h4>
+              <p>User explores live stock quote (₹945.50) and taps Buy.</p>
+              <span class="badge-tag badge-bet1">Core Flow</span>
+            </div>
+          </div>
+
+          <div class="step-item" id="nav-step-2" onclick="goToStep(2)">
+            <div class="step-num">2</div>
+            <div class="step-info">
+              <h4>Guided Smart Order Pad (Bet 1)</h4>
+              <p>Intent selector ('Hold for Long-Term' vs 'Intraday'), Amount budget (₹2,000), whole share calculation, dynamic charges.</p>
+              <span class="badge-tag badge-bet1">Top Bet Showcase</span>
+            </div>
+          </div>
+
+          <div class="step-item" id="nav-step-3" onclick="goToStep(3)">
+            <div class="step-num">3</div>
+            <div class="step-info">
+              <h4>Shortfall & Funding Edge Cases (Bet 2)</h4>
+              <p>Optional test: Simulates success and 15-min pending ledger states.</p>
+              <span class="badge-tag badge-secondary">Secondary Scenario</span>
+            </div>
+          </div>
+
+          <div class="step-item" id="nav-step-4" onclick="goToStep(4)">
+            <div class="step-num">4</div>
+            <div class="step-info">
+              <h4>First Trade Demat Tracker (Bet 3)</h4>
+              <p>Post-trade view: Immediate portfolio reflection vs T+1 settlement.</p>
+              <span class="badge-tag badge-secondary">Future Roadmap</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-dark">
+        <h2>💡 Key Refinements in this Build</h2>
+        <ul style="font-size: 11.5px; color: #CBD5E1; padding-left: 16px; display: flex; flex-direction: column; gap: 6px;">
+          <li><strong>Square-Off Time:</strong> Intraday label updated to <em>"Position must be closed same trading day"</em> with 3:10 PM MIS rule.</li>
+          <li><strong>Dynamic Charges:</strong> Exact NSE buy-side formula computed live (STT ₹1.89 + Stamp ₹0.28 + Exch/GST ₹0.07 = ₹2.24).</li>
+          <li><strong>Banking Delays:</strong> UPI modal handles both instant credit and pending status.</li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Center: Interactive Mobile Phone Mockup -->
+    <main class="simulator-container">
+      <div class="phone-mockup">
+        <!-- Status Bar -->
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="notch"></div>
+          <div class="status-icons">
+            <span>5G</span>
+            <span>100%</span>
+          </div>
+        </div>
+
+        <!-- SCREEN 1: Stock Overview Page -->
+        <div class="screen-view active-screen" id="screen-stock">
+          <div class="stock-app-bar">
+            <span class="back-btn">←</span>
+            <div class="title-group">
+              <h3>TATA MOTORS</h3>
+              <span>NSE: TATAMOTORS • Automobiles</span>
+            </div>
+            <span style="font-size: 16px; cursor: pointer;">⭐</span>
+          </div>
+
+          <div class="stock-hero">
+            <div class="price-row">
+              <div>
+                <div class="price-large">₹945.50</div>
+                <div class="price-change">▲ +₹18.40 (+1.98%) <span>Today</span></div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 11px; background: #DCFCE7; color: #166534; font-weight: 700; padding: 2px 6px; border-radius: 4px;">Large Cap</span>
+              </div>
+            </div>
+
+            <!-- Mini Chart -->
+            <div class="chart-container-sim">
+              <svg class="chart-svg" viewBox="0 0 300 100" preserveAspectRatio="none">
+                <path d="M0,80 Q40,65 80,72 T160,40 T240,48 T300,15" fill="none" stroke="#00C087" stroke-width="3" />
+                <path d="M0,80 Q40,65 80,72 T160,40 T240,48 T300,15 L300,100 L0,100 Z" fill="rgba(0, 192, 135, 0.12)" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Stock Fundamentals -->
+          <div class="stock-stats-grid">
+            <div class="stat-card">
+              <div class="label">52W High / Low</div>
+              <div class="val">₹1,179 / ₹648</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">P/E Ratio</div>
+              <div class="val">10.42 (Healthy)</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Market Cap</div>
+              <div class="val">₹3,47,900 Cr</div>
+            </div>
+            <div class="stat-card">
+              <div class="label">Analyst Rating</div>
+              <div class="val" style="color: var(--angel-green);">84% Buy</div>
+            </div>
+          </div>
+
+          <!-- Sticky Bottom Buy Bar -->
+          <div class="sticky-buy-footer">
+            <button class="btn-action-sell" onclick="alert('Sell order disabled for first-time buyer walkthrough.')">SELL</button>
+            <button class="btn-action-buy" onclick="goToStep(2)">
+              <span>BUY</span>
+              <span style="font-size: 11px; font-weight: 600; opacity: 0.9;">(Smart Mode)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SCREEN 2: The Guided Smart Order Pad (Bet 1 Showcase) -->
+        <div class="screen-view" id="screen-orderpad">
+          <div class="order-pad-header">
+            <div class="order-title-group">
+              <h3>Buy Tata Motors</h3>
+              <div class="live-sub">
+                <span>NSE ₹945.50</span>
+                <span style="color: var(--angel-green);">● Live Quote</span>
+              </div>
+            </div>
+            <span style="cursor: pointer; font-size: 20px; color: #64748B;" onclick="goToStep(1)">✕</span>
+          </div>
+
+          <!-- Preserved State Success Alert -->
+          <div class="preserved-alert-banner" id="preserved-alert">
+            <span>✓</span>
+            <span id="preserved-alert-text"><strong>Funds Confirmed:</strong> Order state restored with refreshed live price.</span>
+          </div>
+
+          <!-- Mode Switcher Pill -->
+          <div class="mode-switch-wrapper">
+            <span style="font-size: 11px; font-weight: 700; color: #475569;">Experience Mode:</span>
+            <div class="mode-pill-opt-wrap mode-switch-pill">
+              <div class="mode-pill-opt active" id="pill-smart" onclick="setPadMode('smart')">🌱 Smart (New)</div>
+              <div class="mode-pill-opt" id="pill-pro" onclick="setPadMode('pro')">⚡ Pro Trader</div>
+            </div>
+          </div>
+
+          <!-- Intent Choice -->
+          <div class="section-label">Investment Intent</div>
+          <div class="purpose-selector">
+            <div class="purpose-card selected" id="card-delivery" onclick="setPurpose('delivery')">
+              <span class="badge-recommend">RECOMMENDED</span>
+              <div class="p-title">Long-Term (Delivery)</div>
+              <div class="p-desc">Full ownership. Shares reside in Demat account. Hold as long as you want.</div>
+            </div>
+            <div class="purpose-card" id="card-intraday" onclick="setPurpose('intraday')">
+              <div class="p-title">Intraday (Day Trade)</div>
+              <div class="p-desc">Position must be closed same trading day. Auto-squares off at 3:10 PM.</div>
+            </div>
+          </div>
+
+          <!-- Amount vs Shares Tabs -->
+          <div class="input-mode-tabs">
+            <div class="input-tab active" id="tab-amount" onclick="setInputMode('amount')">Invest by Budget (₹)</div>
+            <div class="input-tab" id="tab-qty" onclick="setInputMode('qty')">Buy by Shares (Qty)</div>
+          </div>
+
+          <!-- Order Input Stepper -->
+          <div class="order-input-box">
+            <div class="input-left-col">
+              <label id="input-label-text">Investment Budget</label>
+              <div style="display: flex; align-items: center;">
+                <span id="currency-sym" style="font-size: 20px; font-weight: 800; color: #0F172A; margin-right: 2px;">₹</span>
+                <input type="text" class="input-val-display" id="main-order-input" value="2000" oninput="recalcOrder()" />
+              </div>
+            </div>
+            <div class="input-stepper">
+              <button class="step-btn" onclick="stepValue(-500)">−</button>
+              <button class="step-btn" onclick="stepValue(500)">+</button>
+            </div>
+          </div>
+
+          <!-- Quick Chips -->
+          <div class="quick-chips-row">
+            <button class="chip-btn" onclick="setAmount(1000)">₹1,000</button>
+            <button class="chip-btn" onclick="setAmount(2000)">₹2,000</button>
+            <button class="chip-btn" onclick="setAmount(5000)">₹5,000</button>
+          </div>
+
+          <!-- Dynamic Real-Time Calculation & Transparent Breakdown -->
+          <div class="calculation-breakdown-card">
+            <div class="calc-row">
+              <span class="calc-label">Calculated Quantity</span>
+              <span class="calc-val" id="calc-shares-display">2 Shares</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Stock Value</span>
+              <span class="calc-val" id="calc-stock-value">₹1,891.00</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Angel One Brokerage</span>
+              <span class="calc-val" style="color: var(--angel-green);" title="Zero brokerage up to ₹500 for first 30 days">
+                ₹0.00 <span style="font-size: 9.5px; color: #64748B;">(1st 30 Days Promo)</span>
+              </span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Statutory Charges (STT + Stamp + GST)</span>
+              <span class="calc-val" id="calc-taxes-val">₹2.24</span>
+            </div>
+            <div class="calc-row">
+              <span class="calc-label">Total Payable</span>
+              <span class="calc-val" id="calc-total-payable" style="color: var(--angel-orange); font-size: 13.5px;">₹1,893.24</span>
+            </div>
+          </div>
+
+          <!-- Market Slippage & Risk Disclosure -->
+          <div class="market-risk-notice">
+            <span>⚠️</span>
+            <div><strong>Market Order Notice:</strong> Executes at best available prevailing ask price. Minor variation may occur during market volatility.</div>
+          </div>
+
+          <!-- Order Pad Footer Actions -->
+          <div class="order-action-footer">
+            <div class="balance-status-row">
+              <span style="color: #64748B;">Trading Balance: <strong id="balance-display" style="color: #0F172A;">₹2,500.00</strong></span>
+              <span style="color: var(--angel-green); font-weight: 700; font-size: 11px;">✓ Sufficient Funds</span>
+            </div>
+
+            <!-- Primary Action for Bet 1 -->
+            <button class="btn-main-order" id="btn-place-order" onclick="confirmPrimaryOrder()">
+              Confirm & Place Order (₹1,893.24)
+            </button>
+
+            <!-- Secondary Simulation Toggle (Bet 2 Preview) -->
+            <button class="btn-secondary-sim" onclick="goToStep(3)">
+              ⚙️ Simulate Insufficient Balance Flow (Bet 2 Preview)
+            </button>
+          </div>
+        </div>
+
+        <!-- SCREEN 3: Contextual Shortfall Sheet (Bet 2 Preview) -->
+        <div class="upi-sheet-overlay" id="upi-modal">
+          <div class="upi-sheet-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h4 style="font-size: 14px; font-weight: 800; color: #0F172A;">Contextual Fund Top-Up</h4>
+              <span style="cursor: pointer; color: #64748B; font-size: 18px;" onclick="closeUPIModal()">✕</span>
+            </div>
+
+            <div class="bank-reg-banner">
+              <span>Linked Bank: <strong>HDFC Bank •••• 4821</strong></span>
+              <span style="color: var(--angel-green); font-weight: 700;">Verified Account</span>
+            </div>
+
+            <p style="font-size: 11.5px; color: #64748B;">Exact amount required to complete pending Tata Motors order:</p>
+            <div style="font-size: 22px; font-weight: 800; color: #0F172A; margin: 4px 0 10px;" id="modal-shortfall-amt">₹1,893.24</div>
+
+            <div style="font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase;">Select UPI App</div>
+            <div class="upi-app-select">
+              <div class="upi-app-item selected" onclick="selectUpiApp(this)">Google Pay</div>
+              <div class="upi-app-item" onclick="selectUpiApp(this)">PhonePe</div>
+              <div class="upi-app-item" onclick="selectUpiApp(this)">Paytm UPI</div>
+            </div>
+
+            <button class="btn-upi-action" onclick="simulatePaymentOutcome('success')">
+              Outcome A: Funds Confirmed & Resume
+            </button>
+            <button class="btn-upi-pending" onclick="simulatePaymentOutcome('pending')">
+              Outcome B: Bank Pending (Up to 15 min delay)
+            </button>
+          </div>
+        </div>
+
+        <!-- SCREEN 4: Settlement Tracker (Bet 3 Preview) -->
+        <div class="screen-view" id="screen-tracker">
+          <div class="tracker-screen-inner">
+            <div class="order-success-badge">
+              <div class="check-circle">✓</div>
+              <div>
+                <h4 style="font-size: 13px; font-weight: 800; color: #065F46;">Order Placed on Exchange</h4>
+                <p style="font-size: 11px; color: #047857;">Tata Motors • 2 Shares @ ₹945.50</p>
+              </div>
+            </div>
+
+            <div class="timeline-container">
+              <div class="timeline-title">Your First Investment Timeline</div>
+
+              <div class="t-step">
+                <div class="t-step-dot">✓</div>
+                <div class="t-step-content">
+                  <h5>1. Order Executed</h5>
+                  <p>Purchase completed on NSE. Contract note sent to registered email.</p>
+                </div>
+              </div>
+
+              <div class="t-step">
+                <div class="t-step-dot">✓</div>
+                <div class="t-step-content">
+                  <h5>2. Portfolio Updated</h5>
+                  <p>Visible in your Angel One portfolio immediately as an unsettled position.</p>
+                </div>
+              </div>
+
+              <div class="t-step">
+                <div class="t-step-dot pending">3</div>
+                <div class="t-step-content">
+                  <h5>3. Settlement in Progress</h5>
+                  <p>Exchange clearing underway (T+1 rolling settlement cycle).</p>
+                </div>
+              </div>
+
+              <div class="t-step">
+                <div class="t-step-dot pending">4</div>
+                <div class="t-step-content">
+                  <h5>4. Demat Credit</h5>
+                  <p>Shares credited to your CDSL Demat account on applicable settlement date (Tomorrow by 3:30 PM).</p>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-action-buy" style="margin-top: auto; width: 100%; border-radius: 12px;" onclick="goToStep(1)">
+              Return to Portfolio
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Right Column: Case Notes & Methodology -->
+    <aside class="metrics-sidebar">
+      <div class="card-dark">
+        <h2>📋 Relative Prioritisation Matrix</h2>
+        <p style="font-size: 11px; color: #94A3B8; margin-bottom: 6px;">Preliminary PM assessment of proposed roadmap:</p>
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Proposed Bet</th>
+              <th>Impact</th>
+              <th>Confidence</th>
+              <th>Complexity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: rgba(255, 87, 34, 0.12); font-weight: 700;">
+              <td style="color: #FF8A65;">Bet 1: Guided Smart Pad</td>
+              <td>High</td>
+              <td>Medium</td>
+              <td>Medium</td>
+            </tr>
+            <tr>
+              <td>Bet 2: Contextual Funding</td>
+              <td>High</td>
+              <td>High</td>
+              <td>Medium</td>
+            </tr>
+            <tr>
+              <td>Bet 3: Settlement Tracker</td>
+              <td>Medium</td>
+              <td>High</td>
+              <td>Low</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-dark">
+        <h2>🧪 Controlled A/B Experiment Plan</h2>
+        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #CBD5E1;">
+          <div>• <strong>Order Selection:</strong> Control (Standard Pad) vs. Variant (Guided Smart Pad).</div>
+          <div>• <strong>Quantity Input:</strong> Control (Share Qty) vs. Variant (Budget-First Input).</div>
+          <div>• <strong>Cost Visibility:</strong> Control (Nested tab) vs. Variant (Inline dynamic charges).</div>
+          <div style="color: var(--angel-orange); margin-top: 4px;"><strong>Measure:</strong> First-order completion & comprehension without prior unverified lift claims.</div>
+        </div>
+      </div>
+
+      <div class="interview-tip-box">
+        <strong>💡 Candidate Talking Point:</strong> "Notice why we keep the prototype focused on Bet 1: The core problem is parameter comprehension. If users don't know how many shares they can buy or what Delivery implies, funding never happens. We test the budget calculator and intent selector first."
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    let currentStep = 1;
+    let currentStockPrice = 945.50;
+    let inputMode = 'amount';
+    let orderPurpose = 'delivery';
+
+    function goToStep(step) {
+      currentStep = step;
+      document.querySelectorAll('.step-item').forEach((item, idx) => {
+        item.classList.toggle('active', (idx + 1) === step);
+      });
+
+      const sStock = document.getElementById('screen-stock');
+      const sPad = document.getElementById('screen-orderpad');
+      const sUpi = document.getElementById('upi-modal');
+      const sTracker = document.getElementById('screen-tracker');
+
+      sStock.classList.remove('active-screen');
+      sPad.classList.remove('active-screen');
+      sUpi.classList.remove('active');
+      sTracker.classList.remove('active-screen');
+
+      if (step === 1) {
+        sStock.classList.add('active-screen');
+      } else if (step === 2) {
+        sPad.classList.add('active-screen');
+      } else if (step === 3) {
+        sPad.classList.add('active-screen');
+        openUPIModal();
+      } else if (step === 4) {
+        sTracker.classList.add('active-screen');
+      }
+    }
+
+    function setPadMode(mode) {
+      document.getElementById('pill-smart').classList.toggle('active', mode === 'smart');
+      document.getElementById('pill-pro').classList.toggle('active', mode === 'pro');
+      if (mode === 'pro') {
+        alert("Pro Mode Switched: Retains advanced multi-leg order triggers, GTT, MTF leverage, and technical order book for seasoned traders.");
+      }
+    }
+
+    function setPurpose(purpose) {
+      orderPurpose = purpose;
+      document.getElementById('card-delivery').classList.toggle('selected', purpose === 'delivery');
+      document.getElementById('card-intraday').classList.toggle('selected', purpose === 'intraday');
+      recalcOrder();
+    }
+
+    function setInputMode(mode) {
+      inputMode = mode;
+      document.getElementById('tab-amount').classList.toggle('active', mode === 'amount');
+      document.getElementById('tab-qty').classList.toggle('active', mode === 'qty');
+
+      const label = document.getElementById('input-label-text');
+      const sym = document.getElementById('currency-sym');
+      const input = document.getElementById('main-order-input');
+
+      if (mode === 'amount') {
+        label.innerText = 'Investment Budget';
+        sym.innerText = '₹';
+        input.value = '2000';
+      } else {
+        label.innerText = 'Number of Shares';
+        sym.innerText = '#';
+        input.value = '2';
+      }
+      recalcOrder();
+    }
+
+    function stepValue(delta) {
+      const input = document.getElementById('main-order-input');
+      let val = parseFloat(input.value) || 0;
+      if (inputMode === 'amount') {
+        val = Math.max(500, val + delta);
+      } else {
+        val = Math.max(1, val + (delta > 0 ? 1 : -1));
+      }
+      input.value = val;
+      recalcOrder();
+    }
+
+    function setAmount(amt) {
+      if (inputMode !== 'amount') setInputMode('amount');
+      document.getElementById('main-order-input').value = amt;
+      recalcOrder();
+    }
+
+    function recalcOrder() {
+      const input = document.getElementById('main-order-input');
+      const val = parseFloat(input.value) || 0;
+      let shares = 0;
+      let totalStockCost = 0;
+
+      if (inputMode === 'amount') {
+        shares = Math.floor(val / currentStockPrice);
+        if (shares < 1) shares = 1;
+        totalStockCost = shares * currentStockPrice;
+      } else {
+        shares = Math.floor(val);
+        if (shares < 1) shares = 1;
+        totalStockCost = shares * currentStockPrice;
+      }
+
+      // Dynamic NSE buy-side statutory charges calculation:
+      // STT (0.1%), Stamp (0.015%), NSE Txn (0.00297%), SEBI (₹10/cr), GST @ 18% on fees
+      const stt = totalStockCost * 0.001;
+      const stamp = totalStockCost * 0.00015;
+      const exch = totalStockCost * 0.0000297;
+      const sebi = totalStockCost * 0.000001;
+      const gst = (exch + sebi) * 0.18;
+      const totalCharges = (stt + stamp + exch + sebi + gst).toFixed(2);
+      const totalPayable = (totalStockCost + parseFloat(totalCharges)).toFixed(2);
+
+      document.getElementById('calc-shares-display').innerText = `${shares} Share${shares > 1 ? 's' : ''}`;
+      document.getElementById('calc-stock-value').innerText = `₹${totalStockCost.toFixed(2)}`;
+      document.getElementById('calc-taxes-val').innerText = `₹${totalCharges}`;
+      document.getElementById('calc-total-payable').innerText = `₹${totalPayable}`;
+      document.getElementById('btn-place-order').innerText = `Confirm & Place Order (₹${totalPayable})`;
+      document.getElementById('modal-shortfall-amt').innerText = `₹${totalPayable}`;
+    }
+
+    function confirmPrimaryOrder() {
+      goToStep(4);
+    }
+
+    function openUPIModal() {
+      document.getElementById('upi-modal').classList.add('active');
+    }
+
+    function closeUPIModal() {
+      document.getElementById('upi-modal').classList.remove('active');
+    }
+
+    function selectUpiApp(el) {
+      document.querySelectorAll('.upi-app-item').forEach(i => i.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function simulatePaymentOutcome(type) {
+      closeUPIModal();
+      const alertBox = document.getElementById('preserved-alert');
+      const alertText = document.getElementById('preserved-alert-text');
+      alertBox.style.display = 'flex';
+
+      if (type === 'success') {
+        alertBox.style.background = '#ECFDF5';
+        alertBox.style.borderColor = '#A7F3D0';
+        alertBox.style.color = '#065F46';
+        alertText.innerHTML = "<strong>Funds Confirmed:</strong> Order state restored with refreshed live price.";
+        document.getElementById('balance-display').innerText = "₹2,500.00";
+      } else {
+        alertBox.style.background = '#FFFBEB';
+        alertBox.style.borderColor = '#FDE68A';
+        alertBox.style.color = '#92400E';
+        alertText.innerHTML = "<strong>Payment Initiated:</strong> Awaiting bank ledger update (up to 15 mins). Order preserved.";
+      }
+    }
+
+    function resetPrototype() {
+      goToStep(1);
+    }
+  </script>
+</body>
+</html>
